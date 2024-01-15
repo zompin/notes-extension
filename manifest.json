@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "Rokot Notes",
+  "version": "1.0",
+  "description": "Notes",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "test-addon-id-notes@rokot",
+      "strict_min_version": "93.0"
+    }
+  },
+  "permissions": ["storage", "unlimitedStorage"],
+
+  "sidebar_action": {
+    "default_title" : "Notes",
+    "default_panel": "sidebar/sidebar.html"
+  },
+
+  "commands": {
+    "_execute_sidebar_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U"
+      }
+    }
+  }
+}

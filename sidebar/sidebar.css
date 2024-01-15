@@ -1,0 +1,90 @@
+@import url("chrome://global/skin/in-content/common-shared.css");
+
+*,
+:before,
+:after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    width: 100%;
+    position: relative;
+    flex: 1 1 auto;
+}
+
+.content_editor-visible .list,
+.content_editor-visible .editor {
+    transform: translateX(-100%);
+}
+
+/*.list,*/
+/*.editor {*/
+/*    transform: translateX(0);*/
+/*    transition: transform 0.3s;*/
+/*}*/
+
+.list {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    padding: 8px;
+    width: 100%;
+}
+
+.list:empty:after {
+    content: 'No items';
+    color: var(--in-content-button-text-color);
+}
+
+.list-item {
+    margin: 0;
+    text-align: left;
+    font-weight: normal;
+    display: block;
+    width: 100%;
+    flex: 1 1 auto;
+    word-break: break-word;
+}
+
+.list-item + .list-item {
+    margin-top: 8px;
+}
+
+.editor {
+    padding: 4px;
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: calc(100% - 4px);
+    width: calc(100% - 8px);
+    overflow: auto;
+    color: var(--in-content-button-text-color);
+}
+
+.editor:empty:after {
+    content: 'Your note hear';
+    opacity: 0.5;
+}
+
+.panel {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px;
+}
+
+.panel__button {
+    display: flex;
+}
