@@ -1,31 +1,27 @@
-import {addNote, getAllNotes, updateNote, deleteNote} from '../js/lib.js'
+import { Api } from '../js/lib/api.js'
+import {debounce} from '../js/lib/debounce.js'
 
 const content = document.getElementById('content')
 const addButton = document.getElementById('add-button')
 const backButton = document.getElementById('back-button')
 const list = document.getElementById('list')
 const editor = document.getElementById('editor')
-
+const api = new Api(browser.storage.local)
 let currentNote = null
 
-addButton.addEventListener('click', () => {
+const handleKeyUpDebounced = debounce(handleKeyUp)
+
+api.load().then(notes => notes.forEach(addNoteAtList))
+
+function handleAddClick() {
     currentNote = null
     editor.innerHTML = ''
     content.classList.add('content_editor-visible')
     editor.focus()
-})
+}
 
-backButton.addEventListener('click', () => {
+function handleBackClick() {
     content.classList.remove('content_editor-visible')
-})
-
-function debounce(callback) {
-    let timer = 0
-
-    return function(...args) {
-        clearTimeout(timer)
-        timer = setTimeout(() => callback(...args), 150)
-    }
 }
 
 async function handleKeyUp(e) {
@@ -39,7 +35,7 @@ async function handleKeyUp(e) {
     if (!content) {
         if (currentNote) {
             deleteFromTree(currentNote)
-            deleteNote(currentNote)
+            await api.remove(currentNote)
             currentNote = null
         }
 
@@ -47,20 +43,17 @@ async function handleKeyUp(e) {
     }
 
     if (!currentNote) {
-        currentNote = await addNote({ content })
+        currentNote = await api.addOrUpdate({ content })
         addNoteAtList(currentNote)
     } else {
-        currentNote = await updateNote({ ...currentNote, content })
+        currentNote = await api.addOrUpdate({ ...currentNote, content })
         updateNoteAtTree(currentNote)
     }
 }
 
-const handleKeyUpDebounced = debounce(handleKeyUp)
-editor.addEventListener('keyup', handleKeyUpDebounced)
-
 function sanitize(str) {
     const tmp = document.createElement('div')
-    tmp.innerHTML = str
+    tmp.innerHTML = str.replaceAll('</div><div>', '\n')
 
     return tmp.textContent
 }
@@ -84,27 +77,17 @@ function updateNoteAtTree(note) {
 }
 
 function deleteFromTree(note) {
-    const item = list.querySelector(`button[data-id="${note.created}"]`)
-
-    if (!item) {
-        return
-    }
-
-    item.remove()
+    list.querySelector(`button[data-id="${note.created}"]`)?.remove()
 }
 
-getAllNotes().then(notes => {
-    notes.forEach(addNoteAtList)
-})
-
-list.addEventListener('click', async e => {
+async function handleItemClick(e) {
     const id = e.target.getAttribute('data-id')
 
     if (!id) {
         return
     }
 
-    const note = (await getAllNotes()).find(n => n.created === id)
+    const note = (api.notes).find(n => n.created === id)
 
     if (!note) {
         return
@@ -114,10 +97,20 @@ list.addEventListener('click', async e => {
     editor.innerHTML = note.content
     content.classList.add('content_editor-visible')
     editor.focus()
-})
+}
 
-document.addEventListener('keyup', (e) => {
+function handleESCClick(e) {
     if (e.key === 'Escape') {
         content.classList.remove('content_editor-visible')
     }
-})
+}
+
+addButton.addEventListener('click', handleAddClick)
+
+backButton.addEventListener('click', handleBackClick)
+
+editor.addEventListener('keyup', handleKeyUpDebounced)
+
+list.addEventListener('click', handleItemClick)
+
+document.addEventListener('keyup', handleESCClick)

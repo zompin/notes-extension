@@ -28,12 +28,6 @@ body {
     transform: translateX(-100%);
 }
 
-/*.list,*/
-/*.editor {*/
-/*    transform: translateX(0);*/
-/*    transition: transform 0.3s;*/
-/*}*/
-
 .list {
     position: absolute;
     top: 0;
