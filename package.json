@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watchAll"
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watchAll",
+    "start:firefox": "npx web-ext run --source-dir ./"
   },
   "type": "module",
   "dependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "web-ext": "^7.11.0"
   }
 }

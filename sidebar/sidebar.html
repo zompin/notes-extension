@@ -6,13 +6,15 @@
 <body>
     <div id="content" class="content">
         <div class="list" id="list"></div>
-        <div id="editor" class="editor" contenteditable="true" spellcheck="false" tabindex="0"></div>
+        <div id="editor-wrapper" class="editor-wrapper">
+            <div id="editor" class="editor" spellcheck="false"></div>
+        </div>
     </div>
     <div class="panel">
         <button id="back-button" class="primary panel__button">
             <img src="chrome://global/skin/icons/arrow-left.svg" />
         </button>
-        <button id="add-button" class="primary panel__button">
+        <button id="add-button" class="primary panel__button show button-add">
             <img src="chrome://global/skin/icons/plus.svg">
         </button>
     </div>

@@ -10,7 +10,6 @@
     }
   },
   "permissions": ["storage", "unlimitedStorage"],
-
   "sidebar_action": {
     "default_title" : "Notes",
     "default_panel": "sidebar/sidebar.html"
