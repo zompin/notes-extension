@@ -31,15 +31,18 @@ export class Sidebar {
 
     addOrUpdateNote(note) {
         let item = this.list.querySelector(`button[data-id="${note.created}"]`)
+        const content = note.content.replace(/<div>-{5,}.*/, '')
 
         if (!item) {
             item = document.createElement('button')
             item.classList.add('list-item')
             item.setAttribute('data-id', note.created)
             this.list.append(item)
+        } else {
+            this.list.firstChild.before(item)
         }
 
-        item.textContent = sanitize(note.content)
+        item.textContent = sanitize(content)
     }
 
     deleteNote(note) {
@@ -67,6 +70,11 @@ export class Sidebar {
         }
 
         this.current = this.current || {}
+
+        if (this.current.content === this.editor.innerHTML) {
+            return
+        }
+
         this.current.content = this.editor.innerHTML
 
         if (this.editor.innerHTML) {
@@ -141,6 +149,7 @@ export class Sidebar {
 
     async render() {
         this.items = await this.api.load()
+        this.items.sort((a, b) => new Date(b.updated) - new Date(a.updated))
         this.items.forEach(this.addOrUpdateNote.bind(this))
     }
 }
