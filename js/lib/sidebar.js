@@ -62,7 +62,7 @@ export class Sidebar {
         this.editor.innerHTML = note.content
     }
 
-    async handleChange() {
+    async handleChange(e) {
         const tmp = this.editor.innerHTML
 
         if (tmp === '<br>' || tmp === '<div><br></div>') {
@@ -130,7 +130,11 @@ export class Sidebar {
 
     focus() {
         this.editor.contentEditable = 'true'
-        this.editor.focus()
+
+        if (!this.editor.innerHTML) {
+            this.editor.focus()
+            return
+        }
 
         this.editor.scroll({
             top: this.editor.scrollHeight,
@@ -142,7 +146,7 @@ export class Sidebar {
         const pos = this.editor.childNodes.length
 
         range.setStart(this.editor, pos)
-        range.setEnd(this.editor, pos)
+        range.setEnd(this.editor, pos - 1)
         getSelection().removeAllRanges()
         getSelection().addRange(range)
     }
