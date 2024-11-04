@@ -4,7 +4,8 @@
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watchAll",
-    "start:firefox": "npx web-ext run --source-dir ./"
+    "start:firefox": "npx web-ext run --source-dir ./",
+    "build": "zip -r addon.zip manifest.json ./js ./sidebar"
   },
   "type": "module",
   "dependencies": {
