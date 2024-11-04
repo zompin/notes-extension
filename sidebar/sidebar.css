@@ -114,3 +114,46 @@ body {
 .panel__button.show {
     display: flex;
 }
+
+.settings {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--background-color-canvas);
+    padding: 0 10px 10px;
+}
+
+.settings.show {
+    display: block;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+}
+
+.settings__row + .settings__row {
+    margin-top: 20px;
+}
+
+.settings__row_import-export button {
+    margin: 0;
+}
+
+.import {
+    position: relative;
+    overflow: hidden;
+}
+
+.import input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+}

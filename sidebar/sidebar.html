@@ -14,9 +14,25 @@
         <button id="back-button" class="primary panel__button">
             <img src="chrome://global/skin/icons/arrow-left.svg" />
         </button>
+        <button id="settings-button" class="primary panel__button show">
+            <img src="chrome://global/skin/icons/settings.svg" />
+        </button>
         <button id="add-button" class="primary panel__button show button-add">
             <img src="chrome://global/skin/icons/plus.svg">
         </button>
+    </div>
+    <div class="settings" id="settings">
+        <button id="close-button" class="primary close-button">
+            <img src="chrome://global/skin/icons/close.svg">
+        </button>
+        <h2>Settings</h2>
+        <div class="settings__row settings__row_import-export">
+            <button id="export">Export</button>
+            <label class="import">
+                <button>Import</button>
+                <input type="file" id="import">
+            </label>
+        </div>
     </div>
     <script type="module" src="sidebar.js"></script>
 </body>

@@ -12,9 +12,14 @@ export class Sidebar {
     constructor(api) {
         this.list = document.getElementById('list')
         this.editor = document.getElementById('editor')
+        this.settings = document.getElementById('settings')
         this.editorWrapper = document.getElementById('editor-wrapper')
         this.addButton = document.getElementById('add-button')
         this.backButton = document.getElementById('back-button')
+        this.settingsButton = document.getElementById('settings-button')
+        this.closeButton = document.getElementById('close-button')
+        this.exportButton = document.getElementById('export')
+        this.importField = document.getElementById('import')
         this.current = null
         this.focused = null
         this.items = []
@@ -26,6 +31,10 @@ export class Sidebar {
         this.list.addEventListener('click', this.handleSelect.bind(this))
         this.addButton.addEventListener('click', this.showEditor.bind(this))
         this.backButton.addEventListener('click', this.hideEditor.bind(this))
+        this.settingsButton.addEventListener('click', this.showSettings.bind(this))
+        this.closeButton.addEventListener('click', this.closeSettings.bind(this))
+        this.exportButton.addEventListener('click', this.exportData.bind(this))
+        this.importField.addEventListener('change', this.importData.bind(this))
         document.addEventListener('keyup', this.handleEscape.bind(this))
     }
 
@@ -108,6 +117,7 @@ export class Sidebar {
         this.editorWrapper.classList.remove('show')
         this.backButton.classList.remove('show')
         this.addButton.classList.add('show')
+        this.settingsButton.classList.add('show')
     }
 
     showEditor() {
@@ -121,6 +131,7 @@ export class Sidebar {
         this.editorWrapper.classList.add('show')
         this.backButton.classList.add('show')
         this.addButton.classList.remove('show')
+        this.settingsButton.classList.remove('show')
     }
 
     blur() {
@@ -149,6 +160,36 @@ export class Sidebar {
         range.setEnd(this.editor, pos - 1)
         getSelection().removeAllRanges()
         getSelection().addRange(range)
+    }
+
+    showSettings() {
+        this.settings.classList.add('show')
+    }
+
+    closeSettings() {
+        this.settings.classList.remove('show')
+    }
+
+    exportData() {
+        const link = document.createElement('a')
+        const blob = new Blob([JSON.stringify(this.items, null, '\t')], {type: 'text/json'})
+        const objectURL = URL.createObjectURL(blob)
+
+        link.download = 'notes.json'
+        link.href = objectURL
+        document.body.append(link)
+        link.click()
+        link.remove()
+    }
+
+    importData(e) {
+        const reader = new FileReader()
+
+        reader.onload = (e) => {
+            JSON.parse(e.target.result).forEach(this.addOrUpdateNote.bind(this))
+        }
+
+        reader.readAsText(e.target.files[0])
     }
 
     async render() {
