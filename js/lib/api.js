@@ -1,45 +1,79 @@
-const ROOT_KEY = 'notes'
+const KEYS = 'KEYS'
 
 export class Api {
     constructor(storage) {
         this.storage = storage
         this.notes = []
+        this.keys = []
     }
 
     async addOrUpdate(note) {
         const now = new Date().toISOString()
         const index = this.notes.findIndex(n => n.created === note.created)
+        const tmp = {...note}
 
-        if (index !== -1) {
-            const tmp = {...note, updated: now}
+        tmp.updated = now
+
+        if (index === -1) {
+            tmp.created = now
+
+            this.keys.push(now)
+            this.notes.push(tmp)
+        } else {
             this.notes[index] = tmp
-            await this.save()
-
-            return tmp
         }
-        const tmp = { ...note, updated: now, created: now }
 
-        this.notes.push(tmp)
-        await this.save()
+        await Promise.all([
+            index === -1 ? this.storage.set({[KEYS]: this.keys}).catch(this.handleError): null,
+            this.storage.set({[tmp.created]: tmp}).catch(this.handleError)
+        ])
 
         return tmp
     }
 
     async remove(note) {
-        this.notes = this.notes.filter(n => n.created !== note.created)
+        const foundNoteIndex = this.notes.findIndex(n => n.created === note.created)
+        const foundKeyIndex = this.keys.findIndex(k => k === note.created)
 
-        await this.save()
+        if (foundNoteIndex === -1 || foundKeyIndex === -1) {
+            return
+        }
+
+        this.notes.splice(foundNoteIndex, 1)
+        this.keys.splice(foundKeyIndex, 1)
+
+        await Promise.all([
+            this.storage.set({[KEYS]: this.keys}),
+            this.storage.remove(note.created)
+        ]).catch(this.handleError)
+    }
+
+    async importNotes(notes) {
+        const keys = notes.map(n => n.created)
+
+        for (let i = 0; i < notes.length; i += 10) {
+            const obj = notes.slice(i, i + 10).reduce((acc, note) => {
+                acc[note.created] = note
+
+                return acc
+            }, {})
+
+            await this.storage.set(obj).catch(this.handleError)
+        }
+
+        this.storage.set({[KEYS]: keys}).catch(this.handleError)
     }
 
     async load() {
-        const {notes} = await this.storage.get(ROOT_KEY).catch(this.handleError) || {}
-        this.notes = notes || []
+        this.keys = (await this.storage.get(KEYS))[KEYS] || []
+
+        for (let i = 0; i < this.keys.length; i += 10) {
+            const notes = await this.storage.get(this.keys.slice(i, i + 10)).catch(this.handleError)
+
+            Object.values(notes).forEach(n => this.notes.push(n))
+        }
 
         return this.notes
-    }
-
-    async save() {
-        await this.storage.set({ [ROOT_KEY]: this.notes }).catch(this.handleError)
     }
 
     handleError(e) {

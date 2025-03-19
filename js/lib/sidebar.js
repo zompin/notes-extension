@@ -185,8 +185,9 @@ export class Sidebar {
     importData(e) {
         const reader = new FileReader()
 
-        reader.onload = (e) => {
-            JSON.parse(e.target.result).forEach(this.addOrUpdateNote.bind(this))
+        reader.onload = async (e) => {
+            await this.api.importNotes(JSON.parse(e.target.result))
+            await this.render()
         }
 
         reader.readAsText(e.target.files[0])
