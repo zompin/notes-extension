@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Rokot Notes",
-  "version": "1.3",
+  "version": "1.4",
   "description": "Notes",
   "browser_specific_settings": {
     "gecko": {
